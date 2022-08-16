@@ -15,6 +15,12 @@ spec:
       containers:
         - name: auth
           image: dockerx2000/auth
+          env:
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: jwt_key
 
 ---
 

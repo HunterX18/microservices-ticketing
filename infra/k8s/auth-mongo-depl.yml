@@ -15,6 +15,13 @@ spec:
       containers:
         - name: auth-mongo
           image: mongo
+          env:
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: jwt_key
+
 ---
 
 apiVersion: v1
@@ -22,7 +29,7 @@ kind: Service
 metadata:
   name: auth-mongo-srv
 spec:
-  selector: 
+  selector:
     app: auth-mongo
   ports:
     - name: db
