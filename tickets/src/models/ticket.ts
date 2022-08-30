@@ -28,7 +28,7 @@ ticketSchema.set("toJSON", {
 	},
 });
 
-const TicketModel = mongoose.model("Ticker", ticketSchema);
+const TicketModel = mongoose.model("Ticket", ticketSchema);
 
 class Ticket extends TicketModel {
 	constructor(attrs: ticketAttrs) {
