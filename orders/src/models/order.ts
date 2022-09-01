@@ -2,6 +2,13 @@ import mongoose from "mongoose";
 import { OrderStatus } from "@srstickets/common";
 import { Ticket } from "./ticket";
 
+// export enum OrderStatus {
+// 	Created = "created",
+// 	Cancelled = "cancelled",
+// 	AwaitingPayment = "awaiting:payment",
+// 	Complete = "complete",
+// }
+
 export { OrderStatus };
 
 interface OrderAttrs {

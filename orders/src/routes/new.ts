@@ -4,9 +4,10 @@ import {
 	NotFoundError,
 	requireAuth,
 	validateRequest,
-	OrderStatus,
+	// OrderStatus,
 	BadRequestError,
 } from "@srstickets/common";
+import { OrderStatus } from "../models/order";
 import { body } from "express-validator";
 import { Ticket } from "../models/ticket";
 import { Order } from "../models/order";
