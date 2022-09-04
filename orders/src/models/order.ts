@@ -52,6 +52,20 @@ class Order extends orderModel {
 	constructor(attrs: OrderAttrs) {
 		super(attrs);
 	}
+	static async isReserved(ticket: mongoose.Document): Promise<boolean> {
+		const existingOrder = await Order.findOne({
+			ticket: ticket,
+			status: {
+				$in: [
+					OrderStatus.Created,
+					OrderStatus.AwaitingPayment,
+					OrderStatus.Complete,
+				],
+			},
+		});
+		if (existingOrder) return true;
+		return false;
+	}
 }
 
 export { Order };

@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+import mongoose, { version } from "mongoose";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
 interface ticketAttrs {
 	title: string;
@@ -27,6 +28,9 @@ ticketSchema.set("toJSON", {
 		delete ret._id;
 	},
 });
+
+// ticketSchema.set("versionKey", "version");
+ticketSchema.plugin(updateIfCurrentPlugin);
 
 const TicketModel = mongoose.model("Ticket", ticketSchema);
 

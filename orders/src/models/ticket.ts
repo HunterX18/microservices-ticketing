@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
 interface TicketAttrs {
 	title: string;
@@ -17,6 +18,8 @@ const TicketSchema = new mongoose.Schema({
 	},
 });
 
+TicketSchema.plugin(updateIfCurrentPlugin);
+
 TicketSchema.set("toJSON", {
 	transform(doc, ret) {
 		ret.id = ret._id;
@@ -24,12 +27,17 @@ TicketSchema.set("toJSON", {
 	},
 });
 
-
 const ticketModel = mongoose.model("Ticket", TicketSchema);
 
 class Ticket extends ticketModel {
 	constructor(attrs: TicketAttrs) {
 		super(attrs);
+	}
+	static findByEvent(event: { id: string; version: number }) {
+		return Ticket.findOne({
+			_id: event.id,
+			__v: event.version - 1,
+		});
 	}
 }
 

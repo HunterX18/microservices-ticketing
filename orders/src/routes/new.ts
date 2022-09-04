@@ -32,19 +32,10 @@ router.post(
 		const { ticketId } = req.body;
 		const ticket = await Ticket.findById(ticketId);
 		if (!ticket) throw new NotFoundError();
-		const existingOrder = await Order.findOne({
-			ticket: ticket,
-			status: {
-				$in: [
-					OrderStatus.Created,
-					OrderStatus.AwaitingPayment,
-					OrderStatus.Complete,
-				],
-			},
-		});
-		if (existingOrder) {
-			throw new BadRequestError("Ticket is already reserved");
-		}
+
+		const isReserved = await Order.isReserved(ticket);
+
+		if (isReserved) throw new BadRequestError("Ticket is already reserved");
 
 		const expiration = new Date();
 		expiration.setSeconds(expiration.getSeconds() + EXPIRATION_WINDOW_SECONDS);
@@ -59,6 +50,7 @@ router.post(
 
 		new OrderCreatedPublisher(natsWrapper.client).publish({
 			id: order.id,
+			version: order.__v,
 			status: order.status,
 			userId: order.userId,
 			expiresAt: order.expiresAt.toISOString(),
