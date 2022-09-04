@@ -1,13 +1,7 @@
 import mongoose from "mongoose";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 import { OrderStatus } from "@srstickets/common";
 import { Ticket } from "./ticket";
-
-// export enum OrderStatus {
-// 	Created = "created",
-// 	Cancelled = "cancelled",
-// 	AwaitingPayment = "awaiting:payment",
-// 	Complete = "complete",
-// }
 
 export { OrderStatus };
 
@@ -45,6 +39,8 @@ orderSchema.set("toJSON", {
 		delete ret._id;
 	},
 });
+
+orderSchema.plugin(updateIfCurrentPlugin);
 
 const orderModel = mongoose.model("Order", orderSchema);
 

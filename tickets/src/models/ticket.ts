@@ -20,6 +20,10 @@ const ticketSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	orderId: {
+		type: String,
+		required: false,
+	},
 });
 
 ticketSchema.set("toJSON", {
@@ -29,7 +33,6 @@ ticketSchema.set("toJSON", {
 	},
 });
 
-// ticketSchema.set("versionKey", "version");
 ticketSchema.plugin(updateIfCurrentPlugin);
 
 const TicketModel = mongoose.model("Ticket", ticketSchema);
