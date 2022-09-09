@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 import { OrderStatus } from "@srstickets/common";
-import { Ticket } from "./ticket";
+import { TicketDoc } from "./ticket";
 
 export { OrderStatus };
 
@@ -9,7 +9,19 @@ interface OrderAttrs {
 	userId: string;
 	status: OrderStatus;
 	expiresAt: Date;
-	ticket: Ticket["id"];
+	ticket: TicketDoc;
+}
+
+interface OrderDoc extends mongoose.Document {
+	userId: string;
+	status: OrderStatus;
+	expiresAt: Date;
+	ticket: TicketDoc;
+	version: number;
+}
+
+interface OrderModel extends mongoose.Model<OrderDoc> {
+	build(attrs: OrderAttrs): OrderDoc;
 }
 
 const orderSchema = new mongoose.Schema({
@@ -40,28 +52,11 @@ orderSchema.set("toJSON", {
 	},
 });
 
+orderSchema.set("versionKey", "version");
 orderSchema.plugin(updateIfCurrentPlugin);
-
-const orderModel = mongoose.model("Order", orderSchema);
-
-class Order extends orderModel {
-	constructor(attrs: OrderAttrs) {
-		super(attrs);
-	}
-	static async isReserved(ticket: mongoose.Document): Promise<boolean> {
-		const existingOrder = await Order.findOne({
-			ticket: ticket,
-			status: {
-				$in: [
-					OrderStatus.Created,
-					OrderStatus.AwaitingPayment,
-					OrderStatus.Complete,
-				],
-			},
-		});
-		if (existingOrder) return true;
-		return false;
-	}
-}
+orderSchema.statics.build = (attrs: OrderAttrs) => {
+	return new Order(attrs);
+};
+const Order = mongoose.model<OrderDoc, OrderModel>("Order", orderSchema);
 
 export { Order };

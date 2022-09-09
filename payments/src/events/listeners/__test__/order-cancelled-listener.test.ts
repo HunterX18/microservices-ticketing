@@ -1,17 +1,18 @@
 import { OrderCancelledListener } from "../order-cancelled-listener";
 import { natsWrapper } from "../../../nats-wrapper";
 import { Order } from "../../../models/order";
-import mongoose from "mongoose";
 import { OrderCancelledEvent, OrderStatus } from "@srstickets/common";
+import mongoose from "mongoose";
 
 const setup = async () => {
 	const listener = new OrderCancelledListener(natsWrapper.client);
 
-	const order = new Order({
+	const order = Order.build({
+		id: new mongoose.Types.ObjectId().toHexString(),
 		status: OrderStatus.Created,
 		price: 10,
 		userId: "sada",
-		// version: 0,
+		version: 0,
 	});
 	await order.save();
 

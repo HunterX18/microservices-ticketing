@@ -7,14 +7,15 @@ import { Message } from "node-nats-streaming";
 
 const setup = async () => {
 	const listener = new TicketUpdatedListener(natsWrapper.client);
-	const ticket = new Ticket({
-		title: "Concert",
+	const ticket = Ticket.build({
+		id: new mongoose.Types.ObjectId().toHexString(),
+		title: "concert",
 		price: 20,
 	});
 	await ticket.save();
 	const data: TicketUpdatedEvent["data"] = {
 		id: ticket.id,
-		version: ticket.__v + 1,
+		version: ticket.version + 1,
 		title: "Movie",
 		price: 100,
 		userId: "hunterx",
@@ -35,6 +36,7 @@ it("finds, updates, saves a ticket", async () => {
 	const updatedTicket = await Ticket.findById(ticket.id);
 	expect(updatedTicket!.title).toEqual(data.title);
 	expect(updatedTicket!.price).toEqual(data.price);
+	expect(updatedTicket!.version).toEqual(data.version);
 });
 
 it("acks the message", async () => {

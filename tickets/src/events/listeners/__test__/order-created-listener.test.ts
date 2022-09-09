@@ -8,12 +8,11 @@ import { Message } from "node-nats-streaming";
 const setup = async () => {
 	const listener = new OrderCreatedListener(natsWrapper.client);
 
-	const ticket = new Ticket({
+	const ticket = Ticket.build({
 		title: "concert",
-		price: 23,
-		userId: "31asdf",
-	});
-
+		price: 99,
+		userId: "asdf"
+	})
 	await ticket.save();
 
 	const data: OrderCreatedEvent["data"] = {

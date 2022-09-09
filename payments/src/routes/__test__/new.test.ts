@@ -56,8 +56,10 @@ it("return 400 when purchasing cancelled order", async () => {
 it("returns a 201 with valid inputs", async () => {
 	const userId = new mongoose.Types.ObjectId().toHexString();
 	const price = Math.floor(Math.random() * 100000);
-	const order = new Order({
+	const order = Order.build({
+		id: new mongoose.Types.ObjectId().toHexString(),
 		userId,
+		version: 0,
 		price,
 		status: OrderStatus.Created,
 	});

@@ -4,18 +4,20 @@ import { Ticket } from "../../../models/ticket";
 import { Order, OrderStatus } from "../../../models/order";
 import { ExpirationCompleteEvent } from "@srstickets/common";
 import { Message } from "node-nats-streaming";
+import mongoose from "mongoose";
 
 const setup = async () => {
 	const listener = new ExpirationCompleteListener(natsWrapper.client);
-	const ticket = new Ticket({
-		title: "concert",
+	const ticket = Ticket.build({
+		id: new mongoose.Types.ObjectId().toHexString(),
+		title: "Concert",
 		price: 20,
 	});
 	await ticket.save();
 
-	const order = new Order({
+	const order = Order.build({
 		status: OrderStatus.Created,
-		userId: "sdgasg",
+		userId: "asdfasdf",
 		expiresAt: new Date(),
 		ticket,
 	});

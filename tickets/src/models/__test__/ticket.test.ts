@@ -1,11 +1,11 @@
 import { Ticket } from "../ticket";
 
 it("implements optimistic concurrency control", async () => {
-	const ticket = new Ticket({
+	const ticket = Ticket.build({
 		title: "concert",
-		price: 20,
-		userId: "1234",
-	});
+		price: 5,
+		userId: "123"
+	})
 	await ticket.save();
 
 	const firstInstance = await Ticket.findById(ticket.id);
@@ -24,14 +24,14 @@ it("implements optimistic concurrency control", async () => {
 });
 
 it("increments the version number on multiple saves", async () => {
-	const ticket = new Ticket({
+	const ticket = Ticket.build({
 		title: "concert",
-		price: 12,
-		userId: "asdfasd",
-	});
+		price: 20,
+		userId: "123"
+	})
 	await ticket.save();
-	expect(ticket.__v).toEqual(0);
+	expect(ticket.version).toEqual(0);
 
 	await ticket.save();
-	expect(ticket.__v).toEqual(1);
+	expect(ticket.version).toEqual(1);
 });

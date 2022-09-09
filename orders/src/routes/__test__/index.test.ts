@@ -1,15 +1,17 @@
+import mongoose from "mongoose";
 import request from "supertest";
 import { app } from "../../app";
-import { Order } from "../../models/order";
 import { Ticket } from "../../models/ticket";
 
 const buildTicket = async () => {
-	const ticket = new Ticket({
-		title: "Concert",
-		price: 20,
-	});
-	await ticket.save();
-	return ticket;
+  const ticket = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
+    title: "concert",
+    price: 20,
+  });
+  await ticket.save();
+
+  return ticket;
 };
 
 it("fetches orders for a particular user", async () => {

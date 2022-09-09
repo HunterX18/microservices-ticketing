@@ -4,7 +4,13 @@ interface PaymentAttrs {
 	orderId: string;
 	stripeId: string;
 }
-
+interface PaymentDoc extends mongoose.Document {
+	orderId: string;
+	stripeId: string;
+}
+interface PaymentModel extends mongoose.Model<PaymentDoc> {
+	build(attrs: PaymentAttrs): PaymentDoc;
+}
 const paymentSchema = new mongoose.Schema({
 	orderId: {
 		type: String,
@@ -22,13 +28,12 @@ paymentSchema.set("toJSON", {
 		delete ret._id;
 	},
 });
-
-const PaymentModel = mongoose.model("Payments", paymentSchema);
-
-class Payment extends PaymentModel {
-	constructor(attrs: PaymentAttrs) {
-		super(attrs);
-	}
-}
+paymentSchema.statics.build = (attrs: PaymentAttrs) => {
+	return new Payment(attrs);
+};
+const Payment = mongoose.model<PaymentDoc, PaymentModel>(
+	"Payments",
+	paymentSchema
+);
 
 export { Payment };
